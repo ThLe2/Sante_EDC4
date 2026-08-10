@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Étude de cas B1 — Un mois de soins de Madame Thévenot</title>
+<style>
+:root{--prune:#8C1E70;--pruneD:#5E1349;--pruneC:#F4E6EE;--gris:#3C3C3C;--grisM:#8A7A85;
+ --filet:#E8DCE5;--fond:#FAF6F8;--vert:#1B7A4B;--vertC:#EAF5EF;--rouge:#B3261E;--rougeC:#FCEDEC;
+ --or:#C9A961;--orC:#FCF4DC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fond);color:var(--gris);line-height:1.5;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px 48px}
+header{background:var(--pruneD);color:#fff;padding:22px 16px 20px}
+header .in{max-width:880px;margin:0 auto}
+.marque{font-size:11px;letter-spacing:.12em;color:#E8C9DF;font-weight:700;margin-bottom:6px}
+h1{margin:0 0 6px;font-size:24px}
+header p{margin:0;color:#EBD6E4;font-size:14px}
+.card{background:#fff;border:1px solid var(--filet);border-radius:10px;padding:20px;margin-top:20px}
+.card h2{margin:0 0 4px;font-size:17px;color:var(--pruneD)}
+.card .sub{margin:0 0 14px;color:var(--grisM);font-size:13.5px}
+.consigne{background:var(--pruneC);border-left:4px solid var(--prune);padding:12px 14px;
+ border-radius:0 6px 6px 0;font-size:14px;margin-bottom:16px}
+.consigne b{color:var(--pruneD)}
+.it{border-top:1px solid var(--filet);padding:13px 0}
+.it:first-of-type{border-top:0}
+.it .q{font-size:14px;margin-bottom:9px}
+.it .q b{color:var(--pruneD)}
+.ch{display:flex;gap:8px;flex-wrap:wrap}
+.ch button{border:1.5px solid var(--filet);background:#fff;color:var(--gris);border-radius:7px;
+ padding:7px 15px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.ch button:hover:not(:disabled){border-color:var(--prune)}
+.ch button.on{border-color:var(--prune);background:var(--pruneC);color:var(--pruneD)}
+.ch button:disabled{cursor:default;opacity:.75}
+.ch button.juste{border-color:var(--vert);background:var(--vertC);color:var(--vert);opacity:1}
+.ch button.rate{border-color:var(--rouge);background:var(--rougeC);color:var(--rouge);opacity:1}
+select{border:1.5px solid var(--filet);border-radius:7px;padding:8px 11px;font-size:14px;
+ font-family:inherit;color:var(--pruneD);font-weight:600;background:#fff;max-width:100%}
+select:focus{outline:none;border-color:var(--prune)}
+select.juste{border-color:var(--vert);background:var(--vertC)}
+select.rate{border-color:var(--rouge);background:var(--rougeC)}
+input.num{border:1.5px solid var(--filet);border-radius:7px;padding:8px 11px;font-size:15px;
+ font-family:inherit;color:var(--pruneD);font-weight:700;width:150px;background:#fff}
+input.num:focus{outline:none;border-color:var(--prune)}
+input.num.juste{border-color:var(--vert);background:var(--vertC)}
+input.num.rate{border-color:var(--rouge);background:var(--rougeC)}
+.badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 12px;
+ border-radius:20px;font-weight:600;margin:0 0 14px}
+.badge.live{background:var(--vertC);color:var(--vert)}
+.badge.wait{background:var(--pruneC);color:var(--prune)}
+.badge.fall{background:var(--orC);color:#8a6d1f}
+.badge .pt{width:8px;height:8px;border-radius:50%;background:currentColor}
+.x{margin-top:9px;padding:9px 12px;border-radius:7px;font-size:13.2px;display:none;
+ background:var(--fond);border-left:3px solid var(--prune)}
+.x.on{display:block}
+.x b{color:var(--pruneD)}
+.btn{border:0;border-radius:7px;padding:11px 22px;font-size:14.5px;font-weight:600;
+ cursor:pointer;font-family:inherit}
+.btn-p{background:var(--prune);color:#fff}
+.btn-p:disabled{background:#C9AABE;cursor:default}
+.btn-g{background:#fff;color:var(--prune);border:1px solid var(--prune)}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;
+ border-top:1px solid var(--filet);padding-top:14px}
+.fige{color:var(--grisM);font-size:12.5px;font-style:italic}
+.msg{margin-top:11px;padding:10px 13px;border-radius:7px;font-size:13.5px;display:none}
+.msg.err{background:var(--rougeC);color:var(--rouge);border-left:4px solid var(--rouge);display:block}
+.msg.ok{background:var(--vertC);color:var(--vert);border-left:4px solid var(--vert);display:block}
+.score{background:var(--pruneD);color:#fff;border-radius:10px;padding:22px;text-align:center;
+ display:none;margin-top:20px}
+.score.on{display:block}
+.score .n{font-size:34px;font-weight:700}
+.score p{margin:8px 0 0;color:#EBD6E4;font-size:14px}
+#ident{position:fixed;inset:0;background:var(--pruneD);z-index:50;display:flex;
+ align-items:center;justify-content:center;padding:24px}
+#ident .b{background:#fff;border-radius:12px;padding:28px 30px;max-width:440px;width:100%}
+#ident h2{margin:0 0 6px;font-size:19px;color:var(--pruneD)}
+#ident p{margin:0 0 18px;font-size:13.5px;color:var(--grisM)}
+#ident label{display:block;font-size:12px;color:var(--grisM);margin:0 0 4px}
+#ident input{width:100%;border:1.5px solid var(--filet);border-radius:7px;padding:10px 12px;
+ font-size:15px;font-family:inherit;margin-bottom:12px;color:var(--pruneD);font-weight:600}
+#ident input:focus{outline:none;border-color:var(--prune)}
+#ident .err{color:var(--rouge);font-size:13px;margin-bottom:10px;display:none}
+.actions{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+footer{text-align:center;color:var(--grisM);font-size:11px;padding:24px 16px 30px}
+</style></head><body>
+
+<div id="ident"><div class="b">
+  <h2>Avant de commencer</h2>
+  <p>Cet exercice est évalué. Vous ne disposez que d'<b>un seul essai</b> par atelier. À la fin, un document
+  reprenant vos réponses sera produit&nbsp;: vous devrez le déposer sur la plateforme.</p>
+  <div class="err" id="i_err">Merci de renseigner votre nom et votre prénom.</div>
+  <label for="i_prenom">Prénom</label><input id="i_prenom" autocomplete="off">
+  <label for="i_nom">Nom</label><input id="i_nom" autocomplete="off">
+  <button class="btn btn-p" style="width:100%" onclick="entrer()">Commencer l'exercice</button>
+</div></div>
+<header><div class="in">
+<div class="marque">TMK PERFORMANCES</div>
+<h1>Étude de cas B1 — Un mois de soins de Madame Thévenot</h1>
+<p>Séquences 1 à 3 · Étude de cas évaluée · 20 points<span id="qui" style="margin-left:8px;font-weight:600"></span></p>
+</div></header>
+
+<div class="wrap">
+
+<div id="liste"></div>
+
+<div class="score" id="score"><div class="n" id="scoreN">—</div><p id="scoreT"></p>
+  <div class="actions" id="actions" style="display:none">
+    <button class="btn btn-g" onclick="produirePDF()">Télécharger mon document</button>
+    <button class="btn btn-g" onclick="reprendre()">Reprendre en entraînement</button>
+  </div></div>
+
+
+
+<footer>TMK Performances - N° Siret&nbsp;: 49841924100027 - Code NAF&nbsp;: 8559A</footer>
+</div>
+
+<script>
+/* Générateur de PDF minimal — police Helvetica, encodage WinAnsi.
+   Évite toute dépendance externe : le réseau du client peut bloquer les CDN. */
+function pdfEscape(s){
+  let out = "";
+  for(const ch of s){
+    const c = ch.codePointAt(0);
+    let b;
+    if(c === 0x20AC) b = 0x80;            // €
+    else if(c === 0x0153) b = 0x9C;       // œ
+    else if(c === 0x2019 || c === 0x2018) b = 0x27;
+    else if(c === 0x2014 || c === 0x2013) b = 0x2D;   // tirets longs
+    else if(c === 0x201C || c === 0x201D) b = 0x22;   // guillemets courbes
+    else if(c === 0x00A0) b = 0x20;       // espace insécable
+    else if(c < 256) b = c;
+    else b = 0x3F;                        // ?
+    const car = String.fromCharCode(b);
+    out += (car === "(" || car === ")" || car === "\\") ? "\\" + car : car;
+  }
+  return out;
+}
+/* lignes : [{t:"texte", s:taille, b:gras, g:gris, sp:espace_avant}] */
+function makePDF(lignes, titre){
+  const W = 595.28, H = 841.89, ML = 56, MT = 56, MB = 60;
+  const pages = []; let cur = [], y = H - MT;
+  for(const l of lignes){
+    const s = l.s || 10.5, sp = l.sp || 0, lh = s * 1.42;
+    if(y - (lh + sp) < MB){ pages.push(cur); cur = []; y = H - MT; }
+    y -= sp;
+    cur.push({y:y, t:l.t, s:s, b:!!l.b, g:!!l.g, r:!!l.r});
+    y -= lh;
+  }
+  pages.push(cur);
+  const objs = [];
+  const add = o => { objs.push(o); return objs.length; };
+  const kids = [];
+  const contentIds = [];
+  pages.forEach(pg => {
+    let str = "";
+    pg.forEach(it => {
+      const font = it.b ? "/F2" : "/F1";
+      const col = it.g ? "0.54 0.48 0.52" : (it.r ? "0.37 0.07 0.29" : "0.24 0.24 0.24");
+      let x = ML;
+      str += "BT " + font + " " + it.s + " Tf " + col + " rg 1 0 0 1 " + x.toFixed(1) + " "
+           + it.y.toFixed(1) + " Tm (" + pdfEscape(it.t) + ") Tj ET\n";
+    });
+    contentIds.push(str);
+  });
+  // construction du fichier
+  let out = "%PDF-1.4\n";
+  const offsets = [0];
+  const bodies = [];
+  const nPages = pages.length;
+  const idCatalog = 1, idPagesNode = 2, idF1 = 3, idF2 = 4;
+  const idFirstPage = 5;
+  const pageIds = [], contIds = [];
+  for(let i=0;i<nPages;i++){ pageIds.push(idFirstPage + i*2); contIds.push(idFirstPage + i*2 + 1); }
+  bodies[idCatalog] = "<< /Type /Catalog /Pages " + idPagesNode + " 0 R >>";
+  bodies[idPagesNode] = "<< /Type /Pages /Count " + nPages + " /Kids ["
+      + pageIds.map(i => i + " 0 R").join(" ") + "] >>";
+  bodies[idF1] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+  bodies[idF2] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+  for(let i=0;i<nPages;i++){
+    bodies[pageIds[i]] = "<< /Type /Page /Parent " + idPagesNode + " 0 R /MediaBox [0 0 "
+      + W.toFixed(2) + " " + H.toFixed(2) + "] /Resources << /Font << /F1 " + idF1
+      + " 0 R /F2 " + idF2 + " 0 R >> >> /Contents " + contIds[i] + " 0 R >>";
+    bodies[contIds[i]] = "<< /Length " + contentIds[i].length + " >>\nstream\n"
+      + contentIds[i] + "endstream";
+  }
+  const total = idFirstPage + nPages*2 - 1;
+  const xref = [];
+  for(let i=1;i<=total;i++){
+    xref[i] = out.length;
+    out += i + " 0 obj\n" + bodies[i] + "\nendobj\n";
+  }
+  const startx = out.length;
+  out += "xref\n0 " + (total+1) + "\n0000000000 65535 f \n";
+  for(let i=1;i<=total;i++) out += String(xref[i]).padStart(10,"0") + " 00000 n \n";
+  out += "trailer\n<< /Size " + (total+1) + " /Root " + idCatalog + " 0 R >>\nstartxref\n"
+       + startx + "\n%%EOF";
+  const buf = new Uint8Array(out.length);
+  for(let i=0;i<out.length;i++) buf[i] = out.charCodeAt(i) & 0xFF;
+  return new Blob([buf], {type:"application/pdf"});
+}
+function telecharger(blob, nom){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+</script>
+<script>const EX = {"total": 20, "seuil": 14, "evalue": true, "id": "EC_B1", "titrePdf": "Étude de cas B1 — Un mois de soins de Madame Thévenot", "ateliers": [{"titre": "Atelier 1 — Quelle retenue s'applique&nbsp;?", "sub": "4 postes · 4 points", "consigne": "<b>Le mois de Madame Thévenot.</b> Deux consultations chez son médecin traitant, à deux dates différentes, à 30,00&nbsp;€ chacune. Une consultation chez un rhumatologue de secteur 2 adhérent à l'OPTAM, sur orientation, à 55,00&nbsp;€. Douze boîtes de médicaments, délivrées en trois fois. Dix séances de kinésithérapie, une par jour. Deux transports sanitaires le même jour. Pour chaque poste, dites quelle retenue s'applique.", "type": "bouton", "options": ["Participation forfaitaire", "Franchise médicale", "Ni l'une ni l'autre"], "items": [{"q": "Les trois consultations médicales.", "rep": 0, "x": "Les actes réalisés par un médecin relèvent de la participation forfaitaire."}, {"q": "Les douze boîtes de médicaments.", "rep": 1, "x": "La franchise se compte par boîte délivrée, et non par ordonnance."}, {"q": "Les dix séances de kinésithérapie.", "rep": 1, "x": "Les actes des auxiliaires médicaux relèvent de la franchise, avec un plafond journalier."}, {"q": "Un acte réalisé au cours d'une hospitalisation, si elle en avait eu une ce mois-ci.", "rep": 2, "x": "Les actes réalisés pendant une hospitalisation échappent à la franchise."}]}, {"titre": "Atelier 2 — Les calculs du mois", "sub": "6 montants · 12 points", "unite": "€", "consigne": "<b>Données.</b> Participation forfaitaire&nbsp;: 2,00&nbsp;€ par acte, plafond journalier 8,00&nbsp;€ chez un même professionnel. Franchise&nbsp;: 1,00&nbsp;€ par boîte de médicament (aucun plafond journalier), 1,00&nbsp;€ par acte d'auxiliaire médical (plafond journalier 4,00&nbsp;€), 4,00&nbsp;€ par transport (plafond journalier 8,00&nbsp;€). Plafond annuel de chacune&nbsp;: 50,00&nbsp;€. Base d'une consultation de spécialiste adhérent&nbsp;: 31,50&nbsp;€, taux 70&nbsp;%.", "type": "num", "points": 2, "items": [{"q": "Total de <b>participation forfaitaire</b> du mois.", "rep": 6.0, "x": "Trois actes médicaux à des dates différentes : 3 × 2,00. Aucun plafond journalier ne joue, puisqu'ils ne sont pas groupés sur une même journée chez un même professionnel."}, {"q": "Franchise sur les <b>médicaments</b>.", "rep": 12.0, "x": "Douze boîtes, douze fois la franchise. Les médicaments sont la seule catégorie sans plafond journalier : le fractionnement en trois délivrances ne change rien."}, {"q": "Franchise sur les <b>séances de kinésithérapie</b>.", "rep": 10.0, "x": "Une séance par jour fait 1,00 € par jour, très en deçà du plafond journalier de 4,00 €. Le plafond ne joue donc pas : 10 × 1,00."}, {"q": "Franchise sur les <b>transports sanitaires</b>.", "rep": 8.0, "x": "Deux transports feraient 8,00 €, ce qui atteint exactement le plafond journalier. Un troisième transport le même jour n'aurait rien coûté de plus."}, {"q": "<b>Total des sommes irréductibles</b> du mois.", "rep": 36.0, "x": "6,00 + 12,00 + 10,00 + 8,00. Aucun contrat responsable ne peut en rembourser un centime."}, {"q": "Montant versé par la Sécurité sociale sur la consultation du <b>rhumatologue</b>.", "rep": 20.05, "x": "70 % de 31,50 = 22,05, moins 2,00 de participation forfaitaire."}]}, {"titre": "Atelier 3 — Ce qu'il faut savoir lui dire", "sub": "4 affirmations · 4 points", "consigne": "Vrai ou faux&nbsp;?", "type": "bouton", "options": ["Vrai", "Faux"], "items": [{"q": "Ces sommes lui ont été réclamées par les professionnels au moment des soins.", "rep": 1, "x": "Elles sont déduites des remboursements versés ensuite. D'où le décalage qu'elle constate sur son décompte."}, {"q": "Son contrat responsable peut lui rembourser ces 36,00&nbsp;€ si elle monte en gamme.", "rep": 1, "x": "Aucun contrat responsable n'en a le droit. Ce n'est pas un choix commercial de l'assureur."}, {"q": "Une fois le plafond annuel atteint, plus aucune franchise ne lui sera retenue jusqu'au 1<sup>er</sup> janvier suivant.", "rep": 0, "x": "C'est un argument à connaître face à une cliente qui a le sentiment de payer sans fin. Elle a consommé 30,00 € de franchises ce mois-ci sur les 50,00 € de l'année."}, {"q": "La participation forfaitaire et la franchise se partagent un même plafond annuel.", "rep": 1, "x": "Chacune a le sien. Madame Thévenot peut donc supporter les deux dans la même année."}]}]};</script>
+<script>
+['copy','cut','paste','contextmenu','dragstart'].forEach(e =>
+  document.addEventListener(e, ev => ev.preventDefault()));
+
+let STAG = {nom:"", prenom:""};
+let ENTRAINEMENT = (location.hash === "#entrainement") || !EX.evalue;
+
+function entrer(){
+  const n = document.getElementById("i_nom").value.trim();
+  const p = document.getElementById("i_prenom").value.trim();
+  if(n.length < 2 || p.length < 2){
+    document.getElementById("i_err").style.display = "block"; return;
+  }
+  STAG = {nom:n, prenom:p};
+  document.getElementById("ident").style.display = "none";
+  document.getElementById("qui").textContent = p + " " + n.toUpperCase();
+}
+
+const REP = {};              /* "a_i" -> index choisi */
+const FAIT = {};             /* atelier validé */
+const PTS = {};
+
+function rendre(){
+  let h = "";
+  EX.ateliers.forEach((a, ai) => {
+    h += '<div class="card"><h2>' + a.titre + '</h2><div class="sub">' + a.sub + '</div>'
+       + '<div class="consigne">' + a.consigne + '</div>';
+    a.items.forEach((it, i) => {
+      h += '<div class="it"><div class="q">' + it.q + '</div>';
+      if(a.type === "num"){
+        h += '<input class="num" type="text" inputmode="decimal" id="n' + ai + '_' + i
+           + '" placeholder="0,00" autocomplete="off" oninput="saisir(' + ai + ',' + i + ')">'
+           + ' <span style="font-size:13px;color:var(--grisM)">' + (a.unite || "€") + '</span>';
+      }else if(a.type === "select"){
+        h += '<select id="s' + ai + '_' + i + '" onchange="choisirSel(' + ai + ',' + i + ')">'
+           + '<option value="">— à choisir —</option>'
+           + a.options.map((o, j) => '<option value="' + j + '">' + o + '</option>').join("")
+           + '</select>';
+      }else{
+        const opts = it.o || a.options;
+        h += '<div class="ch" id="c' + ai + '_' + i + '">'
+           + opts.map((o, j) => '<button id="b' + ai + '_' + i + '_' + j
+               + '" onclick="choisir(' + ai + ',' + i + ',' + j + ')">' + o + '</button>').join("")
+           + '</div>';
+      }
+      if(it.x) h += '<div class="x" id="x' + ai + '_' + i + '"></div>';
+      h += '</div>';
+    });
+    h += '<div class="bar"><button class="btn btn-p" id="v' + ai + '" onclick="valider(' + ai + ')">'
+       + 'Valider l\'atelier</button><span class="fige" id="f' + ai + '"></span></div>'
+       + '<div class="msg" id="m' + ai + '"></div></div>';
+  });
+  document.getElementById("liste").innerHTML = h;
+}
+
+function choisir(ai, i, j){
+  if(FAIT[ai]) return;
+  REP[ai + "_" + i] = j;
+  const a = EX.ateliers[ai], opts = a.items[i].o || a.options;
+  opts.forEach((_, k) =>
+    document.getElementById("b" + ai + "_" + i + "_" + k).classList.toggle("on", k === j));
+}
+function saisir(ai, i){
+  if(FAIT[ai]) return;
+  const v = document.getElementById("n" + ai + "_" + i).value.trim().replace(",", ".");
+  if(v === "" || isNaN(parseFloat(v))) delete REP[ai + "_" + i];
+  else REP[ai + "_" + i] = parseFloat(v);
+}
+function choisirSel(ai, i){
+  if(FAIT[ai]) return;
+  const v = document.getElementById("s" + ai + "_" + i).value;
+  if(v === "") delete REP[ai + "_" + i]; else REP[ai + "_" + i] = +v;
+}
+
+function valider(ai){
+  if(FAIT[ai]) return;                       /* garde : atelier déjà validé */
+  const a = EX.ateliers[ai];
+  const manque = a.items.map((_, i) => i).filter(i => REP[ai + "_" + i] === undefined);
+  if(manque.length){                          /* complétude AVANT toute correction */
+    const m = document.getElementById("m" + ai);
+    m.className = "msg err";
+    m.textContent = manque.length === 1
+      ? "Une réponse manque encore dans cet atelier."
+      : manque.length + " réponses manquent encore dans cet atelier.";
+    return;
+  }
+  FAIT[ai] = true;
+  let pts = 0;
+  a.items.forEach((it, i) => {
+    const don = REP[ai + "_" + i];
+    const ok = (a.type === "num") ? Math.abs(don - it.rep) <= 0.01 : (don === it.rep);
+    if(ok) pts += (a.points || 1);
+    if(a.type === "num"){
+      const n = document.getElementById("n" + ai + "_" + i);
+      n.disabled = true; n.classList.add(ok ? "juste" : "rate");
+    }else if(a.type === "select"){
+      const s = document.getElementById("s" + ai + "_" + i);
+      s.disabled = true; s.classList.add(ok ? "juste" : "rate");
+      if(!ok) s.title = "";
+    }else{
+      const opts = it.o || a.options;
+      opts.forEach((_, k) => {
+        const b = document.getElementById("b" + ai + "_" + i + "_" + k);
+        b.disabled = true;
+        if(k === it.rep) b.classList.add("juste");
+        else if(k === don) b.classList.add("rate");
+      });
+    }
+    if(it.x){
+      const x = document.getElementById("x" + ai + "_" + i);
+      const att = (a.type === "num")
+          ? it.rep.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " " + (a.unite || "€")
+          : (a.type === "select" ? a.options : (it.o || a.options))[it.rep];
+      x.innerHTML = "<b>" + (ok ? "Juste." : "Réponse attendue : " + att + ".") + "</b> " + it.x;
+      x.classList.add("on");
+    }
+  });
+  PTS[ai] = pts;
+  const b = document.getElementById("v" + ai);
+  b.disabled = true; b.textContent = "Atelier validé";
+  document.getElementById("f" + ai).textContent = "Réponses figées";
+  const m = document.getElementById("m" + ai);
+  const maxi = a.items.length * (a.points || 1);
+  m.className = "msg " + (pts === maxi ? "ok" : "err");
+  m.textContent = pts + " point(s) sur " + maxi
+    + (a.points > 1 ? " (" + a.points + " points par réponse juste)" : "") + ".";
+  if(EX.ateliers.every((_, k) => FAIT[k])) bilan();
+}
+
+function bilan(){
+  const t = EX.ateliers.reduce((s, _, k) => s + (PTS[k] || 0), 0);
+  document.getElementById("scoreN").textContent = t + " / " + EX.total;
+  document.getElementById("scoreT").textContent = t >= EX.seuil
+    ? "Séquence acquise. Vous pouvez passer au questionnaire."
+    : "Reprenez la capsule et la fiche mémo avant de passer au questionnaire.";
+  document.getElementById("score").classList.add("on");
+  window.PTS = t;
+  if(EX.evalue && !ENTRAINEMENT){
+    const a = document.getElementById("actions");
+    if(a) a.style.display = "flex";
+    try{ localStorage.setItem("tmk_" + EX.id + "_fait", "1"); }catch(e){}
+  }
+  const sc = document.getElementById("score");
+  if(sc.scrollIntoView) sc.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function produirePDF(){
+  const L = [], d = new Date();
+  const dd = String(d.getDate()).padStart(2,"0") + "/" + String(d.getMonth()+1).padStart(2,"0")
+           + "/" + d.getFullYear() + " à " + String(d.getHours()).padStart(2,"0") + "h"
+           + String(d.getMinutes()).padStart(2,"0");
+  const propre = t => t.replace(/&nbsp;/g," ").replace(/<[^>]+>/g,"");
+  L.push({t:"TMK PERFORMANCES", s:9, b:true, g:true});
+  L.push({t:EX.titrePdf, s:16, b:true, sp:8});
+  L.push({t:"Les fondamentaux de la santé — module 3B", s:10, g:true, sp:2});
+  L.push({t:"Stagiaire : " + STAG.prenom + " " + STAG.nom.toUpperCase(), s:11, b:true, sp:14});
+  L.push({t:"Passation du " + dd + " — essai unique", s:9.5, g:true});
+  L.push({t:"Résultat : " + window.PTS + " / " + EX.total + " — seuil de réussite " + EX.seuil,
+          s:13, b:true, sp:12});
+  L.push({t:"Détail des réponses", s:12, b:true, sp:16});
+  EX.ateliers.forEach((a, ai) => {
+    L.push({t:propre(a.titre) + "  —  " + (PTS[ai] || 0) + " / " + (a.items.length * (a.points || 1)),
+            s:10.5, b:true, sp:12});
+    a.items.forEach((it, i) => {
+      const don = REP[ai + "_" + i];
+      const ok = (a.type === "num") ? Math.abs(don - it.rep) <= 0.01 : (don === it.rep);
+      const txt = (a.type === "num")
+        ? (don === undefined ? "(vide)" : don.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " " + (a.unite || "€"))
+        : propre(((a.type === "select") ? a.options : (it.o || a.options))[don] || "(vide)");
+      const lab = "  " + (i+1) + ". " + (ok ? "juste" : "à revoir") + " : " + txt;
+      let ligne = "";
+      lab.split(" ").forEach(mo => {
+        if((ligne + " " + mo).length > 94){ L.push({t:ligne, s:9.5, sp:2}); ligne = "     " + mo; }
+        else ligne = ligne ? ligne + " " + mo : mo;
+      });
+      L.push({t:ligne, s:9.5, sp:2});
+    });
+  });
+  L.push({t:"Document produit automatiquement à l'issue de l'essai unique, à déposer sur la plateforme.",
+          s:9, g:true, sp:16});
+  L.push({t:"TMK Performances - N° Siret : 49841924100027 - Code NAF : 8559A", s:8, g:true, sp:14});
+  const nom = "TMK_" + EX.id + "_" + STAG.nom.toUpperCase().replace(/[^A-Za-z0-9]/g,"") + ".pdf";
+  telecharger(makePDF(L, EX.titrePdf), nom);
+}
+
+function reprendre(){
+  if(!confirm("Vous allez reprendre cet exercice en mode entraînement. Aucun nouveau document ne sera produit et le résultat ne sera pas transmis. Continuer ?")) return;
+  location.hash = "entrainement";
+  location.reload();
+}
+
+function rejouer(){
+  Object.keys(REP).forEach(k => delete REP[k]);
+  Object.keys(FAIT).forEach(k => delete FAIT[k]);
+  Object.keys(PTS).forEach(k => delete PTS[k]);
+  rendre();
+  document.getElementById("score").classList.remove("on");
+  const a = document.getElementById("actions"); if(a) a.style.display = "none";
+  if(window.scrollTo) window.scrollTo({top:0, behavior:"smooth"});
+}
+
+if(ENTRAINEMENT){
+  const e = document.getElementById("ident");
+  if(e) e.style.display = "none";
+  const q = document.getElementById("qui");
+  if(q) q.textContent = EX.evalue ? "mode entraînement" : "";
+}
+async function demarrer(){
+  if(!EX.supabase){ rendre(); return; }
+  const S = EX.supabase;
+  const url = S.url + "/rest/v1/" + S.table + "?select=cle,valeur";
+  const cle = new URLSearchParams(location.search).get("key") || S.key;
+  const P = {}; EX.params.forEach(p => P[p.id] = p.def);
+  let etat = "fall", txt = "Base injoignable — valeurs de repli utilisées";
+  try{
+    let r = await fetch(url + "&apikey=" + encodeURIComponent(cle));
+    if(!r.ok) r = await fetch(url, {headers:{apikey:cle, Authorization:"Bearer " + cle}});
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    if(Array.isArray(data) && data.length){
+      const B = {}; data.forEach(x => B[x.cle] = x);
+      let n = 0;
+      EX.params.forEach(p => {
+        if(B[p.cle] && B[p.cle].valeur !== null){ P[p.id] = parseFloat(B[p.cle].valeur); n++; }
+      });
+      etat = (n === EX.params.length) ? "live" : "fall";
+      txt = (n === EX.params.length)
+        ? "Montants lus dans la base de paramètres"
+        : n + " montant(s) sur " + EX.params.length + " lus dans la base";
+    }else{ txt = "Base joignable mais aucune ligne lue — valeurs de repli utilisées"; }
+  }catch(e){}
+  if(typeof recalculer === "function") recalculer(P);
+  const b = document.getElementById("badge");
+  if(b){ b.className = "badge " + etat; document.getElementById("badgeT").textContent = txt; }
+  rendre();
+}
+demarrer();
+</script>
+</body></html>
